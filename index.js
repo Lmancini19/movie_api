@@ -1,8 +1,19 @@
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+const Movie = Models.Movie;
+const User = Models.User;
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
 const fs = require('fs'); 
 const path = require('path');
+
+// import body-parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// connect mongoose to db
+mongoose.connect('mongodb://127.0.0.1:27017/myFlixApp', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // create a write stream (in append mode)
 // a ‘log.txt’ file is created in root directory
@@ -14,76 +25,10 @@ app.use(morgan('combined', {stream: accessLogStream}));
 // for static 'documentation' page 
 app.use(express.static('public'));
 
-let movies = [
-  {
-    title: 'Movie Title 1',
-    description: 'Movie description 1',
-    genre: 'Action',
-    director: 'Director Name 1',
-    imageUrl: 'https://example.com/image1.jpg',
-    featured: true,
-  },
-  {
-    title: 'Movie Title 2',
-    description: 'Movie description 2',
-    genre: 'Comedy',
-    director: 'Director Name 2',
-    imageUrl: 'https://example.com/image2.jpg',
-    featured: false,
-  },
-  {
-    title: 'Movie Title 3',
-    description: 'Movie description 3',
-    genre: 'Action',
-    director: 'Director Name 3',
-    imageUrl: 'https://example.com/image3.jpg',
-    featured: true,
-  },
-  {
-    title: 'Movie Title 4',
-    description: 'Movie description 4',
-    genre: 'Comedy',
-    director: 'Director Name 4',
-    imageUrl: 'https://example.com/image4.jpg',
-    featured: false,
-  },
-  {
-    title: 'Movie Title 5',
-    description: 'Movie description 5',
-    genre: 'Action',
-    director: 'Director Name 5',
-    imageUrl: 'https://example.com/image5.jpg',
-    featured: true,
-  },
-  {
-    title: 'Movie Title 6',
-    description: 'Movie description 6',
-    genre: 'Comedy',
-    director: 'Director Name 6',
-    imageUrl: 'https://example.com/image6.jpg',
-    featured: false,
-  },
-  {
-    title: 'Movie Title 7',
-    description: 'Movie description 7',
-    genre: 'Action',
-    director: 'Director Name 7',
-    imageUrl: 'https://example.com/image7.jpg',
-    featured: true,
-  },
-  {
-    title: 'Movie Title 8',
-    description: 'Movie description 8',
-    genre: 'Comedy',
-    director: 'Director Name 8',
-    imageUrl: 'https://example.com/image8.jpg',
-    featured: false,
-  }
-];
-
-// List All Movies
-app.get('/api/movies', (req, res) => {
+// Return a list of ALL movies to the user
+app.get('/api/movies', async (req, res) => {
   try {
+    const movies = await Movie.find({});
     res.json(movies);
   } catch (error) {
     console.error('Error listing movies:', error);
@@ -91,11 +36,11 @@ app.get('/api/movies', (req, res) => {
   }
 });
 
-// Get Movie by Title
-app.get('/api/movies/:title', (req, res) => {
+// Return data about a single movie by title to the user
+app.get('/api/movies/:title', async (req, res) => {
   try {
     const title = req.params.title;
-    const movie = movies.find((m) => m.title === title);
+    const movie = await Movie.findOne({ title: title });
     if (movie) {
       res.json(movie);
     } else {
@@ -107,45 +52,59 @@ app.get('/api/movies/:title', (req, res) => {
   }
 });
 
-// Get Genre by Name
-app.get('/api/genres/:name', (req, res) => {
+// Return data about a genre by name/title
+app.get('/api/genres/:name', async (req, res) => {
   try {
-    const name = req.params.name;
-    // Example genre data (for illustration purposes)
-    const genre = {
-      name: name,
-      description: 'Genre description for ' + name,
-    };
-    res.json(genre);
+    const name = req.params.name.toLowerCase();
+
+    const movieWithGenre = await Movie.findOne({ 'genre.name': new RegExp('^' + name + '$', 'i') });
+
+    if (movieWithGenre) {
+      res.json(movieWithGenre.genre);
+    } else {
+      res.status(404).json({ error: 'Genre not found.' });
+    }
   } catch (error) {
     console.error('Error getting genre by name:', error);
     res.status(500).json({ error: 'Something went wrong.' });
   }
 });
 
-// Get Director by Name
-app.get('/api/directors/:name', (req, res) => {
+
+// Return data about a director by name
+app.get('/api/directors/:name', async (req, res) => {
   try {
-    const name = req.params.name;
-    // Example director data (for illustration purposes)
-    const director = {
-      name: name,
-      bio: 'Director bio for ' + name,
-      birthYear: 1980,
-      deathYear: null,
-    };
-    res.json(director);
+    const name = req.params.name.toLowerCase();
+
+    const movieWithDirector = await Movie.findOne({ 'director.name': new RegExp('^' + name + '$', 'i') });
+
+    if (movieWithDirector) {
+      res.json(movieWithDirector.director);
+    } else {
+      res.status(404).json({ error: 'Director not found.' });
+    }
   } catch (error) {
-    console.error('Error getting director by name:', error);
+    console.error('Error getting  by name:', error);
     res.status(500).json({ error: 'Something went wrong.' });
   }
 });
 
+
 // User Registration 
-app.post('/api/users/register', (req, res) => {
+app.post('/api/users/register', async (req, res) => {
   try {
-    // Handle user registration logic here
-    res.send('User registration successful.');
+    const existingUser = await User.findOne({ Username: req.body.Username });
+    if (existingUser) {
+      return res.status(400).send(req.body.Username + ' already exists');
+    } else {
+      const newUser = await User.create({
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday,
+      });
+      res.status(201).json(newUser);
+    }
   } catch (error) {
     console.error('Error registering user:', error);
     res.status(500).send('Something went wrong.');
@@ -153,11 +112,20 @@ app.post('/api/users/register', (req, res) => {
 });
 
 // Update User Info 
-app.put('/api/users/:userId', (req, res) => {
+app.put('/api/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    // Handle user info update logic here
-    res.send('User info updated successfully.');
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday,
+      },
+      { new: true }
+    );
+    res.json(updatedUser);
   } catch (error) {
     console.error('Error updating user info:', error);
     res.status(500).send('Something went wrong.');
@@ -165,11 +133,16 @@ app.put('/api/users/:userId', (req, res) => {
 });
 
 // Add Movie to Favorites 
-app.post('/api/users/:userId/favorites', (req, res) => {
+app.post('/api/users/:userId/favorites', async (req, res) => {
   try {
     const userId = req.params.userId;
-    // Handle adding a movie to favorites logic here
-    res.send('Movie added to favorites successfully.');
+    const movieId = req.body.movieId; // Assuming the movieId is provided in the request body
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { FavoriteMovies: movieId } },
+      { new: true }
+    );
+    res.json(user);
   } catch (error) {
     console.error('Error adding movie to favorites:', error);
     res.status(500).send('Something went wrong.');
@@ -177,12 +150,16 @@ app.post('/api/users/:userId/favorites', (req, res) => {
 });
 
 // Remove Movie from Favorites
-app.delete('/api/users/:userId/favorites/:movieId', (req, res) => {
+app.delete('/api/users/:userId/favorites/:movieId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const movieId = req.params.movieId;
-    // Handle removing a movie from favorites logic here
-    res.send('Movie removed from favorites successfully.');
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { FavoriteMovies: movieId } },
+      { new: true }
+    );
+    res.json(user);
   } catch (error) {
     console.error('Error removing movie from favorites:', error);
     res.status(500).send('Something went wrong.');
@@ -190,10 +167,10 @@ app.delete('/api/users/:userId/favorites/:movieId', (req, res) => {
 });
 
 // User Deregistration 
-app.delete('/api/users/:userId', (req, res) => {
+app.delete('/api/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    // Handle user deregistration logic here
+    await User.findOneAndDelete(userId);
     res.send('User deregistered successfully.');
   } catch (error) {
     console.error('Error deregistering user:', error);
