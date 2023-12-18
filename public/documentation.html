@@ -12,178 +12,193 @@
     <h1 class="text-center">Documentation</h1>
     <p class="text-center">MyFlix is web application focused on movies. This application will allow users to explore movie details, directors, and genres. Users can register, modify their profiles, and curate lists of favorite movies.</p>
   </header>
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Description</th>
-            <th>Endpoint URL</th>
-            <th>Method Type</th>
-            <th>Query Parameters</th>
-            <th>Request Body Data</th>
-            <th>Response Body Data</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- List All Movies -->
-        <tr>
-            <td>List all movies</td>
-            <td>/api/movies</td>
-            <td>GET</td>
-            <td>N/A</td>
-            <td>N/A</td>
-            <td>List of movie objects (e.g., JSON array):
-                <pre>
-[
-{
-"title": "Movie Title 1",
-"description": "Movie description 1",
-"genre": "Action",
-"director": "Director Name 1",
-"imageUrl": "https://example.com/image1.jpg",
-"featured": true
-},
-{
-"title": "Movie Title 2",
-"description": "Movie description 2",
-"genre": "Comedy",
-"director": "Director Name 2",
-"imageUrl": "https://example.com/image2.jpg",
-"featured": false
-},
-...
-]
-                </pre>
-            </td>
-        </tr>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Endpoint URL</th>
+                <th>Method Type</th>
+                <th>Query Parameters</th>
+                <th>Request Body Data</th>
+                <th>Response Body Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- List All Movies -->
+            <tr>
+                <td>List all movies</td>
+                <td>/api/movies</td>
+                <td>GET</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>List of movie objects (e.g., JSON array):
+                    <pre>
+    [{
+    _id: ObjectId("11a"),
+        title: 'Django Unchained',
+        description: 'A former slave becomes...',
+        director: {
+        name: 'Quentin Tarantino',
+        bio: 'Influential filmmaker...',
+        birthYear: 1963,
+        deathYear: null
+        },
+        genre: {
+        name: 'Western/Crime',
+        description: 'Combining elements...'
+        },
+        releaseYear: 2012,
+        imageURL: 'https://www.imdb.com...',
+        featured: false
+    }
+    ...
+    ]
+                    </pre>
+                </td>
+            </tr>
 
-        <!-- Get Movie by Title -->
-        <tr>
-            <td>Get data about a single movie by title</td>
-            <td>/api/movies/:title</td>
-            <td>GET</td>
-            <td>N/A</td>
-            <td>N/A</td>
-            <td>Movie object (e.g., JSON):
-                <pre>
-{
-"title": "Movie Title",
-"description": "Movie description",
-"genre": "Action",
-"director": "Director Name",
-"imageUrl": "https://example.com/image.jpg",
-"featured": true
-}
-                </pre>
-            </td>
-        </tr>
+            <!-- Get Movie by Title -->
+            <tr>
+                <td>Get data about a single movie by title</td>
+                <td>/api/movies/:title</td>
+                <td>GET</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>Movie object (e.g., JSON):
+                    <pre>
+   {
+    _id: ObjectId("11a"),
+        title: 'Django Unchained',
+        description: 'A former slave becomes...',
+        director: {
+        name: 'Quentin Tarantino',
+        bio: 'Influential filmmaker...',
+        birthYear: 1963,
+        deathYear: null
+        },
+        genre: {
+        name: 'Western/Crime',
+        description: 'Combining elements...'
+        },
+        releaseYear: 2012,
+        imageURL: 'https://www.imdb.com...',
+        featured: false
+    }
+                    </pre>
+                </td>
+            </tr>
 
-        <!-- Get Genre by Name -->
-        <tr>
-            <td>Get data about a genre by name</td>
-            <td>/api/genres/:name</td>
-            <td>GET</td>
-            <td>N/A</td>
-            <td>N/A</td>
-            <td>Genre object (e.g., JSON):
-                <pre>
-{
-"name": "Thriller",
-"description": "Thrilling movies with suspenseful plots."
-}
-                </pre>
-            </td>
-        </tr>
+            <!-- Get Genre by Name -->
+            <tr>
+                <td>Get data about a genre by name</td>
+                <td>/api/genres/:name</td>
+                <td>GET</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>Genre object (e.g., JSON):
+                    <pre>
+    {
+    name: 'Western/Crime',
+    description: 'Combining elements...'
+    }
+                    </pre>
+                </td>
+            </tr>
 
-        <!-- Get Director by Name -->
-        <tr>
-            <td>Get data about a director by name</td>
-            <td>/api/directors/:name</td>
-            <td>GET</td>
-            <td>N/A</td>
-            <td>N/A</td>
-            <td>Director object (e.g., JSON):
-                <pre>
-{
-"name": "Director Name",
-"bio": "Director's biography...",
-"birthYear": 1970,
-"deathYear": null
-}
-                </pre>
-            </td>
-        </tr>
+            <!-- Get Director by Name -->
+            <tr>
+                <td>Get data about a director by name</td>
+                <td>/api/directors/:name</td>
+                <td>GET</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>Director object (e.g., JSON):
+                    <pre>
+    {
+    name: 'Quentin Tarantino',
+    bio: 'Influential filmmaker...',
+    birthYear: 1963,
+    deathYear: null
+    }
+                    </pre>
+                </td>
+            </tr>
 
-        <!-- User Registration -->
-        <tr>
-            <td>Allow new users to register</td>
-            <td>/api/users/register</td>
-            <td>POST</td>
-            <td>N/A</td>
-            <td>User registration data (e.g., JSON):
-                <pre>
-{
-"username": "newuser",
-"email": "user@example.com",
-"password": "password123"
-}
-                </pre>
-            </td>
-            <td>Confirmation message or user object (e.g., JSON).</td>
-        </tr>
+            <!-- User Registration -->
+            <tr>
+                <td>Allow new users to register</td>
+                <td>/api/users/register</td>
+                <td>POST</td>
+                <td>N/A</td>
+                <td>User registration data (e.g., JSON):
+                    <pre>
+    {
+    _id: ObjectId("11b"),
+        Username: 'user4',
+        Password: 'hashedPassword4',
+        Email: 'user4@example.com',
+        Birthday: '1/1/11'
+    }
+                    </pre>
+                </td>
+                <td>Confirmation message or user object (e.g., JSON).</td>
+            </tr>
 
-        <!-- Update User Info -->
-        <tr>
-            <td>Allow users to update their user info (username)</td>
-            <td>/api/users/:userId</td>
-            <td>PUT</td>
-            <td>N/A</td>
-            <td>User info update data (e.g., JSON):
-                <pre>
-{
-"username": "newusername"
-}
-                </pre>
-            </td>
-            <td>Updated user object (e.g., JSON).</td>
-        </tr>
+            <!-- Update User Info -->
+            <tr>
+                <td>Allow users to update their user info (username)</td>
+                <td>/api/users/:userId</td>
+                <td>PUT</td>
+                <td>N/A</td>
+                <td>User info update data (e.g., JSON):
+                    <pre>
+    {
+    "username": "newusername"
+    }
+                    </pre>
+                </td>
+                <td>Updated user object (e.g., JSON).</td>
+            </tr>
 
-        <!-- Add Movie to Favorites -->
-        <tr>
-            <td>Allow users to add a movie to their list of favorites</td>
-            <td>/api/users/:userId/favorites</td>
-            <td>POST</td>
-            <td>N/A</td>
-            <td>Movie ID (e.g., JSON):
-                <pre>
-{
-"movieId": "12345"
-}
-                </pre>
-            </td>
-            <td>Confirmation message or updated user object (e.g., JSON).</td>
-        </tr>
+            <!-- Add Movie to Favorites -->
+            <tr>
+                <td>Allow users to add a movie to their list of favorites</td>
+                <td>/api/users/:userId/favorites</td>
+                <td>POST</td>
+                <td>N/A</td>
+                <td>Movie ID (e.g., JSON):
+                    <pre>
+    {
+    "movieId": "12345"
+    }
+                    </pre>
+                </td>
+                <td>Confirmation message or updated user object (e.g., JSON).</td>
+            </tr>
 
-        <!-- Remove Movie from Favorites -->
-        <tr>
-            <td>Allow users to remove a movie from their list of favorites</td>
-            <td>/api/users/:userId/favorites/:movieId</td>
-            <td>DELETE</td>
-            <td>N/A</td>
-            <td>N/A</td>
-            <td>Confirmation message or updated user object (e.g., JSON).</td>
-        </tr>
+            <!-- Remove Movie from Favorites -->
+            <tr>
+                <td>Allow users to remove a movie from their list of favorites</td>
+                <td>/api/users/:userId/favorites/:movieId</td>
+                <td>DELETE</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>Confirmation message or updated user object (e.g., JSON).</td>
+            </tr>
 
-        <!-- User Deregistration -->
-        <tr>
-            <td>Allow existing users to deregister</td>
-            <td>/api/users/:userId</td>
-            <td>DELETE</td>
-            <td>N/A</td>
-            <td>N/A</td>
-            <td>Confirmation message (e.g., JSON).</td>
-        </tr>
-    </tbody>
-</table>
+            <!-- User Deregistration -->
+            <tr>
+                <td>Allow existing users to deregister</td>
+                <td>/api/users/:userId</td>
+                <td>DELETE</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>Confirmation message (e.g., JSON).</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
   <footer>
   </footer>
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
