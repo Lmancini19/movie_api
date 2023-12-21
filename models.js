@@ -2,9 +2,11 @@ const mongoose = require('mongoose')
 
 let movieSchema = mongoose.Schema ({
     _id: {
-        type: mongoose.Types.ObjectId,
-        default: mongoose.Types.ObjectId,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      default: function() {
+        return new mongoose.Types.ObjectId();
+    }
+    },
     title: {
         type: String,
         required: true,
@@ -22,7 +24,14 @@ let movieSchema = mongoose.Schema ({
       genre: {
         name: String,
         description: String,
-      },
+        customId: {
+          type: String,
+          default: function () {
+            // Custom ID generation logic for the genre
+            return this.genre.name.replace(/\s/g, '_');
+          },
+        },
+      }, 
       releaseYear: Number,
       imageURL: String,
       featured: {
@@ -32,6 +41,12 @@ let movieSchema = mongoose.Schema ({
     });
 
 let userSchema = mongoose.Schema({
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: function() {
+        return new mongoose.Types.ObjectId();
+     }
+    },
     Username: {
       type: String,
       required: true,
@@ -55,8 +70,8 @@ let userSchema = mongoose.Schema({
     ]
   });
 
-  let Movie = mongoose.model('Movie', movieSchema);
-  let User = mongoose.model('User', userSchema);
+  let movie = mongoose.model('movie', movieSchema);
+  let user = mongoose.model('user', userSchema);
   
-  module.exports.Movie = Movie;
-  module.exports.User = User;
+  module.exports.movie = movie;
+  module.exports.user = user;
